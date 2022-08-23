@@ -1,5 +1,6 @@
 package com.example.webboard.controller;
 
+import com.example.webboard.domain.Role;
 import com.example.webboard.domain.User;
 import com.example.webboard.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,15 +21,16 @@ public class RegistrationController {
     }
     @PostMapping("/registration")
     public String addUser(User user, Map<String, Object> model){
-        User userFromDB = userRepo.findByUserName(user.getUsername());
+        User userFromDB = userRepo.findByUsername(user.getUsername());
         if(userFromDB != null ){
             model.put("message", "User exists!");
             return "registration";
         }
 
         user.setActive(true);
-        user.setRoles(Collections.singleton());
-        
+        user.setRoles(Collections.singleton(Role.USER));
+        userRepo.save(user);
+
         return "redirect:/login";
     }
 }
